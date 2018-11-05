@@ -1,8 +1,6 @@
-//
-// Created by 艾峥鹏 on 2018/11/3.
-//
-
 #include "json.h"
+
+#include <istream>
 
 using namespace json;
 
@@ -54,6 +52,79 @@ std::string object::dump() const {
 }
 
 namespace json {
+    std::istream &operator>>(std::istream &is, object &obj) {
+        get_ws(is);
+
+        if (is.get() != '{') {
+            throw std::exception();
+        }
+
+        get_ws(is);
+
+        if (is.peek() != '}') {
+            int c;
+            while (true) {
+                string name;
+                is >> name;
+
+                get_ws(is);
+
+                c = is.get();
+                if (c != ':') {
+                    throw std::exception();
+                }
+
+                get_ws(is);
+
+                c = is.peek();
+                if (c == '[') {
+                    auto *t = new array();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else if (c == 't' || c == 'f') {
+                    auto *t = new boolean();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else if (c == 'n') {
+                    auto *t = new type();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else if (c >= '0' && c <= '9') {
+                    auto *t = new number();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else if (c == '{') {
+                    auto *t = new object();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else if (c == '\"') {
+                    auto *t = new string();
+                    is >> *t;
+                    obj.value[name.to_string()] = t;
+                } else {
+                    throw std::exception();
+                }
+
+                get_ws(is);
+
+                c = is.peek();
+                if (c == ',') {
+                    is.get();
+                    get_ws(is);
+                    continue;
+                } else if (c == '}') {
+                    break;
+                } else {
+                    throw std::exception();
+                }
+            }
+        }
+
+        is.get();
+
+        return is;
+    }
+
     std::ostream &operator<<(std::ostream &os, const object &obj) {
         return os << obj.to_json_text();
     }

@@ -1,7 +1,3 @@
-//
-// Created by 艾峥鹏 on 2018/11/3.
-//
-
 #include "json.h"
 
 #include <istream>

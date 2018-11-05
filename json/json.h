@@ -1,7 +1,3 @@
-//
-// Created by 艾峥鹏 on 2018/11/3.
-//
-
 #ifndef JSON_JSON_H
 #define JSON_JSON_H
 
