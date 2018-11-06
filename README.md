@@ -3,7 +3,7 @@
 ## Usage
 
 ```
-gcc main.cpp json/json.h -ljson
+g++ main.cpp json/json.h -ljson
 ```
 
 ## Example(s)
